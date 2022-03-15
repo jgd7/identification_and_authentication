@@ -1,6 +1,6 @@
 from flask_login import UserMixin
 
-from src.app.db import get_db
+from src.app.database.db import get_db
 
 
 class User(UserMixin):
@@ -9,7 +9,6 @@ class User(UserMixin):
         self.name = name
         self.email = email
 
-    @staticmethod
     def get(user_id):
         db = get_db()
         user = db.execute(
@@ -23,12 +22,11 @@ class User(UserMixin):
         )
         return user
 
-    @staticmethod
-    def create(id_, name, email):
+    def create(self):
         db = get_db()
         db.execute(
             "INSERT INTO user (id, name, email)"
             " VALUES (?, ?, ?)",
-            (id_, name, email),
+            (self.id, self.name, self.email),
         )
         db.commit()
