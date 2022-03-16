@@ -16,19 +16,14 @@ def get_db():
     return g.db
 
 
+@click.command("init-db")
+@with_appcontext
 def init_db():
     db = get_db()
 
     with current_app.open_resource(pkg_resources.resource_filename("database", "schema.sql")) as f:
         db.executescript(f.read().decode("utf8"))
-
-
-@click.command("init-db")
-@with_appcontext
-def init_db_command():
-    """Clear the existing data and create new tables."""
-    init_db()
-    click.echo("Initialized the database.")
+        print("Database created")
 
 
 def close_db():
@@ -36,8 +31,3 @@ def close_db():
 
     if db is not None:
         db.close()
-
-
-def init_app(app):
-    app.teardown_appcontext(close_db)
-    app.cli.add_command(init_db_command)

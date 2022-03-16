@@ -13,7 +13,7 @@ from flask_login import (
 )
 from oauthlib.oauth2 import WebApplicationClient
 
-from src.app.database.db import init_db_command
+from src.app.database.db import get_db, init_db, close_db
 from src.app.user import User
 from src.config import GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_DISCOVERY_URL
 
@@ -24,12 +24,6 @@ app.secret_key = os.urandom(1024)
 
 login_manager = LoginManager()
 login_manager.init_app(app)
-
-# Database setup
-try:
-    init_db_command()
-except sqlite3.OperationalError:
-    pass
 
 # OAuth2 client setup
 client = WebApplicationClient(GOOGLE_CLIENT_ID)
@@ -122,4 +116,13 @@ def logout():
 
 
 if __name__ == "__main__":
+
+    # Database setup
+    try:
+        init_db()
+    # If database already created pass
+    except sqlite3.OperationalError:
+        pass
+
     app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+    close_db()
