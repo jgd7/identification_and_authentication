@@ -124,5 +124,5 @@ if __name__ == "__main__":
     except sqlite3.OperationalError:
         pass
 
-    app.run(debug=True, ssl_context=('cert.pem', 'key.pem'))
+    app.run(host="0.0.0.0", port=80, debug=True, ssl_context=('cert.pem', 'key.pem'))
     close_db()
